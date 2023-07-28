@@ -1,6 +1,24 @@
 {% extends "base.html" %}
 {% block content %}
 <main>
-    <h1>Estado de la Inversión</h1>
-</main>
+    <h1>Status</h1>
+    <table>
+        <tr>
+            <th>Moneda</th>
+            <th>Cantidad</th>
+            <th>Valor en Euros</th>
+        </tr>
+
+        {% for moneda, cantidad, euros in status %}
+        <tr>
+            <td>{{ moneda }}</td>
+            <td>{{ cantidad }}</td>
+            <td>{{ euros }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {{ value }}
+    {{ price }}
+    {{ earnings }}
+</main> 
 {% endblock %}

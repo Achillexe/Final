@@ -1,6 +1,65 @@
 {% extends "base.html" %}
 {% block content %}
 <main>
-    <h1>Compra de Cryptos</h1>
+    <h1>Compra de Crypto</h1>
+
+    <form action="/purchase" method="post">
+        {{ the_form.csrf_token }}
+        {{ the_form.amount_to }}
+        <div>
+           {{ the_form.currency_from.label }}
+           {{ the_form.currency_from }}
+           {% if the_form.currency_from.errors %}
+                {% for mensaje in the_form.currency_from.errors %}
+                <p class="error">{{ mensaje }}</p>
+                {% endfor %}
+                {% endif %}
+
+        </div>
+        <div>
+           {{ the_form.amount_from.label }}
+           {{ the_form.amount_from(step=0.01, type="number") }}
+           {% if the_form.amount_from.errors %}
+                {% for mensaje in the_form.amount_from.errors %}
+                <p class="error">{{ mensaje }}</p>
+        {% endfor %}
+        {% endif %}
+        </div>
+
+        <div>
+           {{ the_form.currency_to.label }}
+           {{ the_form.currency_to }}
+           {% if the_form.currency_to.errors %}
+                {% for mensaje in the_form.currency_to.errors %}
+                <p class="error">{{ mensaje }}</p>
+        {% endfor %}
+        {% endif %}
+        </div>
+
+        <div>
+            {% if the_form.amount_to.data %}
+                {{ the_form.amount_to.label }}
+                {{ the_form.amount_to.data }}
+         {% endif %}
+         </div>
+
+         <div class="button">
+            {{ the_form.calculate }}
+            {% if the_form.calculate.errors %}
+                 {% for mensaje in the_form.calculate.errors %}
+                 <p class="error">{{ mensaje }}</p>
+         {% endfor %}
+         {% endif %}
+         </div>
+
+        <div class="button">
+           {{ the_form.submit}}
+           {% if the_form.submit.errors %}
+                {% for mensaje in the_form.submit.errors %}
+                <p class="error">{{ mensaje }}</p>
+        {% endfor %}
+        {% endif %}
+        </div>
+    </form>
 </main>
 {% endblock %}
