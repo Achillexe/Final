@@ -1,3 +1,4 @@
+from wallet import app
 import sqlite3
 from datetime import datetime
 import os
@@ -132,13 +133,26 @@ class MovementDAO:
         conn.close()
         return lista
     
-    def wallet(self):
+class Wallet:
+    def __init__(self):
+
+        wallet, price = self.calculations(app.config["PATH_SQLITE"])
+        self.wallet = wallet
+        self.price = price
+
+        self.value = 0
+        for i in self.wallet:
+            self.value += i[2]
+
+        self.earnings = self.value + self.price
+
+    def calculations(self, db):
         
         query = """
         SELECT moneda_from, cantidad_from, moneda_to, cantidad_to FROM movements;
         """
 
-        conn = sqlite3.connect(self.path)
+        conn = sqlite3.connect(db)
         cur = conn.cursor()
         cur.execute(query)
         regs = cur.fetchall()
@@ -149,7 +163,7 @@ class MovementDAO:
         for reg in regs:
             regs_to.append(reg[2:])
             regs_from.append(reg[:2])
-
+        
         crypto_resultado = {}
         crypto_resta = {}
         euro_resultado = {}
@@ -183,25 +197,19 @@ class MovementDAO:
             if key in euro_resultado:
                 euro_resultado[key] -= value
 
-        listed_resultado = [(key, value) for key, value in crypto_resultado.items()]
-        
+        listed = [(key, value) for key, value in crypto_resultado.items()]
+    
         euros = []
         for currency, amount in crypto_resultado.items():
             euros.append(Exchange(amount, currency, "EUR").amount_to)
         
-        self.wallet = []
-        for item, euros in zip(listed_resultado, euros):
-            self.wallet.append((item[0], item[1], euros))
-        
-        self.value = 0
-        for i in self.wallet:
-            self.value += i[2]
+        wallet = []
+        for item, euros in zip(listed, euros):
+            wallet.append((item[0], item[1], euros))
 
-        self.price = euro_resultado[key]
+        price = euro_resultado[key]
 
-        self.earnings = self.value + self.price
-
-        return self.wallet
+        return wallet, price
 
 class Exchange:
     def __init__(self, amount, coin_from, coin_to):

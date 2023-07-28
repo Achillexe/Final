@@ -32,8 +32,9 @@ def purchase():
 
 @app.route("/status")
 def check():
-    status = dao.wallet()
-    value = dao.value
-    price = dao.price
-    earnings = dao.earnings
+    wallet = Wallet()
+    status = wallet.wallet
+    value = wallet.value
+    price = wallet.price
+    earnings = wallet.earnings
     return render_template("status.html", status=status, value=value, price=price, earnings=earnings, title="Estado de la Inversión")
