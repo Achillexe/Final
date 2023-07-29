@@ -3,6 +3,8 @@ from flask import render_template, flash, request, redirect
 from wallet.models import *
 from wallet.forms import MovementForm
 
+CURRENCIES = ["EUR", "BTC"]
+
 dao = MovementDAO(app.config["PATH_SQLITE"])
 
 @app.route("/")
@@ -20,9 +22,10 @@ def purchase():
         try:
             if form.calculate.data:
                 form.amount_to.data = Exchange(form.amount_from.data, form.currency_from.data, form.currency_to.data).amount_to
-                return render_template("purchase.html", the_form = form, title= "Compra de Crypto")
+                return render_template("purchase.html", the_form=form, title= "Compra de Crypto")
             else:
-                if form.submit.data:
+                validation = dao.validate(form.currency_from.data, form.currency_to.data)
+                if form.submit.data and validation:
                     dao.purchase(Movement(form.currency_from.data, form.amount_from.data, form.currency_to.data, form.amount_to.data))
                     return redirect("/")
 

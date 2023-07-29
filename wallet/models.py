@@ -5,6 +5,8 @@ import os
 import requests
 
 CURRENCIES = ["EUR", "ETH", "BNB", "ADA", "DOT", "BTC", "USDT", "XRP", "SOL", "MATIC"]
+PURCHASE = ["EUR", "BTC"]
+TRADE = ["ETH", "BNB", "ADA", "DOT", "BTC", "USDT", "XRP", "SOL", "MATIC"]
 
 class Movement:
     def __init__(self, currency_from, amount_from, currency_to, amount_to, id = None, date=None, time=None):
@@ -99,6 +101,15 @@ class MovementDAO:
             cur.execute(query)
             conn.close()
 
+    def validate (self, currency_from, currency_to):
+        if currency_from in PURCHASE and currency_to in PURCHASE:
+            return True
+        elif currency_from in TRADE and currency_to in TRADE:
+            return True
+        else:
+            return False
+            
+
     def purchase(self, movement):
 
         query = """
@@ -110,7 +121,6 @@ class MovementDAO:
         conn = sqlite3.connect(self.path)
         cur = conn.cursor()
         
-
         cur.execute(query, (movement.current_date, movement.current_time,
                             movement.currency_from, movement.amount_from, movement.currency_to, movement.amount_to))
         conn.commit()
@@ -132,7 +142,7 @@ class MovementDAO:
 
         conn.close()
         return lista
-    
+ 
 class Wallet:
     def __init__(self):
 
@@ -234,6 +244,3 @@ class Exchange:
             
         except requests.exceptions.RequestException as e:
             return False, str(e)
-        
-class Status:
-    pass
