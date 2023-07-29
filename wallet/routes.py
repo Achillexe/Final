@@ -25,7 +25,8 @@ def purchase():
                 return render_template("purchase.html", the_form=form, title= "Compra de Crypto")
             else:
                 validation = dao.validate(form.currency_from.data, form.currency_to.data)
-                if form.submit.data and validation:
+                balance = dao.balance(form.amount_from.data, form.currency_from.data)
+                if form.submit.data and validation and balance:
                     dao.purchase(Movement(form.currency_from.data, form.amount_from.data, form.currency_to.data, form.amount_to.data))
                     return redirect("/")
 

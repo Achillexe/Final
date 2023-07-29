@@ -108,8 +108,51 @@ class MovementDAO:
             return True
         else:
             return False
-            
 
+    def balance (self, amount_from, currency_from):
+        query = """
+        SELECT moneda_from, cantidad_from, moneda_to, cantidad_to FROM movements 
+        WHERE moneda_from = :currency OR moneda_to = :currency
+        """
+
+        conn = sqlite3.connect(self.path)
+        cur = conn.cursor()
+        cur.execute(query, {"currency": currency_from})
+        regs = cur.fetchall()
+        
+        regs_to = []
+        regs_from = []
+
+        for reg in regs:
+            if reg[2] == currency_from:
+                regs_to.append(reg[2:])
+            else:
+                regs_from.append(reg[:2])
+
+        crypto_resultado = {}
+        crypto_resta = {}
+        
+        for currency, amount in regs_to:
+            if currency != "EUR" and currency in crypto_resultado:
+                crypto_resultado[currency] += amount
+            elif currency != "EUR":
+                crypto_resultado[currency] = amount
+
+        for currency, amount in regs_from:
+            if currency != "EUR" and currency in crypto_resta:
+                crypto_resta[currency] += amount
+            elif currency != "EUR":
+                crypto_resta[currency] = amount
+
+        for key, value in crypto_resta.items():
+            if key in crypto_resultado:
+                crypto_resultado[key] -= value
+
+        if crypto_resultado[key] >= amount_from:
+            return True
+        else:
+            return False
+    
     def purchase(self, movement):
 
         query = """
