@@ -14,21 +14,23 @@
         <tr>
             <td>{{ moneda }}</td>
             <td>{{ cantidad }}</td>
-            <td>{{ euros }}</td>
+            <td>{{ euros|round(2) }}</td>
         </tr>
         {% endfor %}
     </table>
 
     <div class="results"></div>
-        <div id="value">
-            <p class="inline-p" id="result-title">Valor actual: </p><p class="inline-p" id="result">{{ value }}</p>
-        </div>
-        <div>
-            <p class="inline-p" id="result-title">Precio de compra: </p><p class="inline-p" id="result">{{ price }}</p>
-        </div>
-        <div id="earnings">
-            <p class="inline-p" id="result-title">Resultado de la inversión: </p><p class="inline-p" id="result">{{ earnings }}</p>
-        </div>
+        {% if status %}
+            <div id="value">
+                <p class="inline-p" id="result-title">Valor actual: </p><p class="inline-p" id="result">{{ value|round(2) }}</p>
+            </div>
+            <div>
+                <p class="inline-p" id="result-title">Precio de compra: </p><p class="inline-p" id="result">{{ price|round(2) }}</p>
+            </div>
+            <div id="earnings">
+                <p class="inline-p" id="result-title">Resultado de la inversión: </p><p class="inline-p" id="result">{{ earnings|round(2) }}</p>
+            </div>
+        {% endif %}
     </div>
 
     <div class="flash">

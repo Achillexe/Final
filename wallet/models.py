@@ -107,7 +107,7 @@ class MovementDAO:
         elif currency_from in TRADE and currency_to in TRADE:
             return True
         else:
-            raise ValueError("Las operaciones permitidas son entre EUR/BTC - BTC/EUR y entre criptos")
+            raise ValueError("Las operaciones permitidas son: EUR a BTC | BTC a EUR | Entre cryptos")
 
     def balance (self, amount_from, currency_from):
         query = """
@@ -179,6 +179,19 @@ class MovementDAO:
         conn.commit()
         conn.close()
 
+    def get_permitted_currency_from(self):
+        query = """
+        SELECT DISTINCT moneda_to FROM movements;
+        """
+        conn = sqlite3.connect(self.path)
+        cur = conn.cursor()
+        cur.execute(query)
+        res = cur.fetchall()
+        currencies = [currency[0] for currency in res]
+        conn.close()
+
+        return currencies
+
     def get_all(self):
         query = """
         SELECT moneda_from, cantidad_from, moneda_to, cantidad_to, id, date, time
@@ -194,16 +207,19 @@ class MovementDAO:
             lista.append(Movement(*reg))
 
         conn.close()
-        return lista
+
+        if lista:
+            return lista
+        else:
+            return False
  
 class Wallet:
     def __init__(self):
 
-        wallet, price = self.calculations(app.config["PATH_SQLITE"])
+        calculations = self.calculations(app.config["PATH_SQLITE"])
 
-        if wallet:
-            self.wallet = wallet
-            self.price = price
+        if isinstance(calculations, tuple):
+            self.wallet, self.price = calculations
             
             self.value = 0
             for i in self.wallet:
@@ -212,6 +228,10 @@ class Wallet:
             self.earnings = self.value + self.price
 
         else:
+            self.wallet = []
+            self.price = 0
+            self.value = 0
+            self.earnings = 0
             raise ValueError("No hay movimientos en la base de datos")
 
     def calculations(self, db):
@@ -246,7 +266,9 @@ class Wallet:
                 elif currency == "EUR" and currency in euro_resultado:
                     euro_resultado[currency] += amount
                 elif currency == "EUR":
-                    euro_resultado[currency] = 0
+                    euro_resultado[currency] = amount
+                else:
+                    euro_resultado["EUR"] = 0
 
             for currency, amount in regs_from:
                 if currency != "EUR" and currency in crypto_resta:

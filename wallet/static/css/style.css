@@ -38,18 +38,18 @@ header {
 
 #calculate {
     position: relative;
-    top: 17px;
+    top: 33px;
     left: -140px;
 }
 
 #submit {
     position: relative;
-    top: -52px;
+    top: -36px;
 }
 
 #calculation {
     position: relative;
-    top: -10px;
+    top: 10px;
 }
 
 .error {
@@ -63,6 +63,8 @@ header {
 
 .amount {
     max-width: 260px;
+    position: relative;
+    top: 30px;
 }
 
 .flash li{
@@ -82,4 +84,9 @@ header {
 
 #result-title {
     color: rgb(76, 137, 250);
+}
+
+.amount-error {
+    position:relative;
+    top: 50px;
 }

@@ -19,13 +19,21 @@ https://www.coinapi.io/
     a. Solo configurar a FALSE si la aplicación está operativa en un entorno de desarrollo/pruebas. En producción configurar siempre a TRUE.
 
 2. Instalar dependencias del proyecto ejecutando:
-
-'''
-pip install -r requirements.txt
-'''
+`pip install -r requirements.txt`
 
 # Ejecución
-Ejecuta en el directorio de la aplicación:
-'''
-flask run
-'''
+Ejecutar en el directorio de la aplicación:
+`flask run`
+
+# NOTA
+La consigna del ejercicio tenía dos criterios contradictorios en las instrucciones. Transcribiendo textualmente:
+
+1. VENTA: De cualquier cripto a euros: Se considerará recuperación de la inversión. Si
+al vender conseguimos más euros de los que invertimos será considerado beneficio,
+si obtenemos menos euros de los que invertimos será considerado pérdida.
+
+2. /purchase: mostrará un formulario en el que realizar una compra, venta o
+intercambio de monedas. Se podrá comprar BTC en euros y vender BTC a euros, el
+resto de cripto monedas se intercambiarán por BTC y entre ellas
+
+Se eligió el camino 2.

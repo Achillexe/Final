@@ -32,10 +32,10 @@
         <div class="form">
             <div class="amount">
                 {{ form.amount_from.label }}
-                {{ form.amount_from(step=0.01, type="number") }}
+                {{ form.amount_from(step=0.0001, type="number") }}
                 {% if form.amount_from.errors %}
                     {% for mensaje in form.amount_from.errors %}
-                    <p class="error">{{ mensaje }}</p>
+                    <p class="amount-error">{{ mensaje }}</p>
                     {% endfor %}
                 {% endif %}
             </div>

@@ -35,7 +35,7 @@ def purchase():
                     return render_template("purchase.html", form=form, route=request.path)
                 
                 elif form.operation.data != f"{form.currency_from.data};{form.amount_from.data};{form.currency_to.data};{form.amount_to.data}":
-                    flash("La operación ha sido modificada")
+                    flash("La cantidad de crypto a ser adquirida debe ser calculada correctamente antes de comprar")
                     return render_template("purchase.html", form=form, route=request.path)
                 
                 else:
