@@ -107,7 +107,7 @@ class MovementDAO:
         elif currency_from in TRADE and currency_to in TRADE:
             return True
         else:
-            return False
+            raise ValueError("Las operaciones permitidas son entre EUR/BTC - BTC/EUR y entre criptos")
 
     def balance (self, amount_from, currency_from):
         query = """
@@ -120,38 +120,48 @@ class MovementDAO:
         cur.execute(query, {"currency": currency_from})
         regs = cur.fetchall()
         
-        regs_to = []
-        regs_from = []
+        if regs and currency_from != "EUR":
+            regs_to = []
+            regs_from = []
 
-        for reg in regs:
-            if reg[2] == currency_from:
-                regs_to.append(reg[2:])
+            for reg in regs:
+                if reg[2] == currency_from:
+                    regs_to.append(reg[2:])
+                else:
+                    regs_from.append(reg[:2])
+
+            crypto_resultado = {}
+            crypto_resta = {}
+            
+            for currency, amount in regs_to:
+                if currency in crypto_resultado:
+                    crypto_resultado[currency] += amount
+                else:
+                    crypto_resultado[currency] = amount
+
+            if regs_from:
+                for currency, amount in regs_from:
+                    if currency in crypto_resta:
+                        crypto_resta[currency] += amount
+                    else:
+                        crypto_resta[currency] = amount
+
+                for key, value in crypto_resta.items():
+                    if key in crypto_resultado:
+                        crypto_resultado[key] -= value
+
+            key, value = crypto_resultado.popitem()
+            
+            if value >= amount_from:
+                return True
             else:
-                regs_from.append(reg[:2])
-
-        crypto_resultado = {}
-        crypto_resta = {}
+                raise ValueError("No tienes suficientes fondos para esta operación")
         
-        for currency, amount in regs_to:
-            if currency != "EUR" and currency in crypto_resultado:
-                crypto_resultado[currency] += amount
-            elif currency != "EUR":
-                crypto_resultado[currency] = amount
-
-        for currency, amount in regs_from:
-            if currency != "EUR" and currency in crypto_resta:
-                crypto_resta[currency] += amount
-            elif currency != "EUR":
-                crypto_resta[currency] = amount
-
-        for key, value in crypto_resta.items():
-            if key in crypto_resultado:
-                crypto_resultado[key] -= value
-
-        if crypto_resultado[key] >= amount_from:
+        elif currency_from == "EUR":
             return True
+        
         else:
-            return False
+            raise ValueError("Todavía no has comprado ninguna cripto con la que puedas operar. Has tu primera compra con euros")
     
     def purchase(self, movement):
 
@@ -190,14 +200,19 @@ class Wallet:
     def __init__(self):
 
         wallet, price = self.calculations(app.config["PATH_SQLITE"])
-        self.wallet = wallet
-        self.price = price
 
-        self.value = 0
-        for i in self.wallet:
-            self.value += i[2]
+        if wallet:
+            self.wallet = wallet
+            self.price = price
+            
+            self.value = 0
+            for i in self.wallet:
+                self.value += i[2]
 
-        self.earnings = self.value + self.price
+            self.earnings = self.value + self.price
+
+        else:
+            raise ValueError("No hay movimientos en la base de datos")
 
     def calculations(self, db):
         
@@ -210,80 +225,90 @@ class Wallet:
         cur.execute(query)
         regs = cur.fetchall()
         
-        regs_to = []
-        regs_from = []
+        if regs:
+            regs_to = []
+            regs_from = []
 
-        for reg in regs:
-            regs_to.append(reg[2:])
-            regs_from.append(reg[:2])
+            for reg in regs:
+                regs_to.append(reg[2:])
+                regs_from.append(reg[:2])
+            
+            crypto_resultado = {}
+            crypto_resta = {}
+            euro_resultado = {}
+            euro_resta = {}
+
+            for currency, amount in regs_to:
+                if currency != "EUR" and currency in crypto_resultado:
+                    crypto_resultado[currency] += amount
+                elif currency != "EUR":
+                    crypto_resultado[currency] = amount
+                elif currency == "EUR" and currency in euro_resultado:
+                    euro_resultado[currency] += amount
+                elif currency == "EUR":
+                    euro_resultado[currency] = 0
+
+            for currency, amount in regs_from:
+                if currency != "EUR" and currency in crypto_resta:
+                    crypto_resta[currency] += amount
+                elif currency != "EUR":
+                    crypto_resta[currency] = amount
+                elif currency == "EUR" and currency in euro_resta:
+                    euro_resta[currency] += amount
+                elif currency == "EUR":
+                    euro_resta[currency] = amount                
+
+            for currency, amount in crypto_resta.items():
+                if currency in crypto_resultado:
+                    crypto_resultado[currency] -= amount
+
+            for currency, amount in euro_resta.items():
+                if currency in euro_resultado:
+                    euro_resultado[currency] -= amount
+                else:
+                    euro_resultado[currency] = 0 - amount
+
+            listed = [(key, value) for key, value in crypto_resultado.items()]
         
-        crypto_resultado = {}
-        crypto_resta = {}
-        euro_resultado = {}
-        euro_resta = {}
+            euros = []
+            for currency, amount in crypto_resultado.items():
+                euros.append(Exchange(amount, currency, "EUR").amount_to)
+            
+            wallet = []
+            for item, euros in zip(listed, euros):
+                wallet.append((item[0], item[1], euros))
 
-        for currency, amount in regs_to:
-            if currency != "EUR" and currency in crypto_resultado:
-                crypto_resultado[currency] += amount
-            elif currency != "EUR":
-                crypto_resultado[currency] = amount
-            elif currency == "EUR" and currency in euro_resultado:
-                euro_resultado[currency] += amount
-            elif currency == "EUR":
-                euro_resultado[currency] = amount
+            price = euro_resultado["EUR"]
 
-        for currency, amount in regs_from:
-            if currency != "EUR" and currency in crypto_resta:
-                crypto_resta[currency] += amount
-            elif currency != "EUR":
-                crypto_resta[currency] = amount
-            elif currency == "EUR" and currency in euro_resta:
-                euro_resta[currency] += amount
-            elif currency == "EUR":
-                euro_resta[currency] = amount                
-
-        for key, value in crypto_resta.items():
-            if key in crypto_resultado:
-                crypto_resultado[key] -= value
-
-        for key, value in euro_resta.items():
-            if key in euro_resultado:
-                euro_resultado[key] -= value
-
-        listed = [(key, value) for key, value in crypto_resultado.items()]
-    
-        euros = []
-        for currency, amount in crypto_resultado.items():
-            euros.append(Exchange(amount, currency, "EUR").amount_to)
-        
-        wallet = []
-        for item, euros in zip(listed, euros):
-            wallet.append((item[0], item[1], euros))
-
-        price = euro_resultado[key]
-
-        return wallet, price
+            return wallet, price
+            
+        else:
+            return False
 
 class Exchange:
     def __init__(self, amount, coin_from, coin_to):
         
-        tasa = self.rate(coin_from, coin_to)
-        self.amount_to = amount * tasa
+        status, tasa = self.rate(coin_from, coin_to)
+
+        if status:
+            self.amount_to = amount * tasa
+        else:
+            raise ValueError("No se ha podido consultar el valor de la crypto por problemas de conexión. Volver a intentar en unos segundos.")
         
     def rate(self, coin_from, coin_to):
         
         url = f"https://rest.coinapi.io/v1/exchangerate/{coin_from}/{coin_to}"
-        headers = {'X-CoinAPI-Key' : '9111DE0E-4C75-4E13-A205-0318E57DCCFC'}
+        headers = {'X-CoinAPI-Key': app.config["COINAPI_KEY"]}
         
         try:
             response = requests.get(url, headers=headers)
             data = response.json()
 
             if response.status_code == 200:
-                return data["rate"]
+                return True, data["rate"]
             
             else:
-                return data["error"]
+                return False, data["error"]
             
         except requests.exceptions.RequestException as e:
             return False, str(e)

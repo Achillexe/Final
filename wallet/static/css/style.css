@@ -1,4 +1,85 @@
-.button {
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+header {
+    margin: -30px;
+}
+
+.navigation {
+    margin: -35px;
     position: relative;
-    top: 40px;
+    top: -20px;
+}
+
+.screen-title {
+    margin: 5px;
+    position: relative;
+    top: -40px;
+    left: -5px;
+}
+
+#message {
+    position: relative;
+    top: -40px;
+}
+
+.data {
+    position: relative;
+    top: -20px;
+}
+
+.form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+#calculate {
+    position: relative;
+    top: 17px;
+    left: -140px;
+}
+
+#submit {
+    position: relative;
+    top: -52px;
+}
+
+#calculation {
+    position: relative;
+    top: -10px;
+}
+
+.error {
+    margin: -20px;
+    position: relative;
+    top: 8px;
+    left: 30px;
+    font-size: 17px;
+    color: firebrick;
+}
+
+.amount {
+    max-width: 260px;
+}
+
+.flash li{
+    position: relative;
+    top: 15px;
+    color: firebrick;
+}
+
+.inline-p {
+    display: inline;
+}
+
+#result {
+    position: relative;
+    left: 12px;
+}
+
+#result-title {
+    color: rgb(76, 137, 250);
 }

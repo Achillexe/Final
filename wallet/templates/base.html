@@ -4,17 +4,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/css/pico.css">
     <link rel="stylesheet" href="/static/css/style.css">
-    <title>myCRIPTO {{ title }}</title>
+    <title>myCRIPTO</title>
 </head>
 <body>
     <header>
         <p class="container">myCRIPTO</p>
     </header>
         <nav class="container">
-            <ul>
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/purchase">Compra</a></li>
-                <li><a href="/status">Status</a></li>
+            <ul class="navigation">
+                <li><a href="/" {% if route == "/" %} class="disabled" {% endif %}>Inicio</a></li>
+                <li><a href="/purchase" {% if route == "/purchase" %} class="disabled" {% endif %}>Compra</a></li>
+                <li><a href="/status" {% if route == "/status" %} class="disabled" {% endif %}>Estado</a></li>
             </ul>
         </nav>
         <main class="container">

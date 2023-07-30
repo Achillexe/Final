@@ -2,13 +2,14 @@
 {% block content %}
 <main>
     <h1>Status</h1>
+
     <table>
         <tr>
             <th>Moneda</th>
             <th>Cantidad</th>
             <th>Valor en Euros</th>
         </tr>
-
+        
         {% for moneda, cantidad, euros in status %}
         <tr>
             <td>{{ moneda }}</td>
@@ -17,8 +18,29 @@
         </tr>
         {% endfor %}
     </table>
-    {{ value }}
-    {{ price }}
-    {{ earnings }}
+
+    <div class="results"></div>
+        <div id="value">
+            <p class="inline-p" id="result-title">Valor actual: </p><p class="inline-p" id="result">{{ value }}</p>
+        </div>
+        <div>
+            <p class="inline-p" id="result-title">Precio de compra: </p><p class="inline-p" id="result">{{ price }}</p>
+        </div>
+        <div id="earnings">
+            <p class="inline-p" id="result-title">Resultado de la inversión: </p><p class="inline-p" id="result">{{ earnings }}</p>
+        </div>
+    </div>
+
+    <div class="flash">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                 <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+    </div>
+    
 </main> 
 {% endblock %}
