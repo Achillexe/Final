@@ -14,10 +14,10 @@ https://www.coinapi.io/
 
 # Instalación
 1. Incluir el fichero .env en el directorio root del proyecto. El fichero será proveído por el CTO de Syvila. 
-    a. En caso de estar probando la aplicación, podrán utilizarse las variables de entorno dentro del fichero .env_template. Crear un fichero .env y copiar en el las variables.
+- En caso de estar probando la aplicación, podrán utilizarse las variables de entorno dentro del fichero .env_template. Crear un fichero .env y copiar en el las variables.
 
 2. informar FLASK_DEBUG a TRUE o FALSE. 
-    a. Solo configurar a FALSE si la aplicación está operativa en un entorno de desarrollo/pruebas. En producción configurar siempre a TRUE.
+- Solo configurar a FALSE si la aplicación está operativa en un entorno de desarrollo/pruebas. En producción configurar siempre a TRUE.
 
 3. Instalar dependencias del proyecto ejecutando:
 `pip install -r requirements.txt`
