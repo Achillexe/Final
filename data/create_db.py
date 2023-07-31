@@ -11,4 +11,4 @@ print(query)
 try:
     cur.execute(query)
 except sqlite3.Error as e:
-    print("Se ha producido el error", e)
+    print("Se ha producido el error: ", e)
