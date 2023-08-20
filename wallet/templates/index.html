@@ -2,7 +2,7 @@
 {% block content %}
 
     <h1 class="screen-title">Movimientos</h1>
-
+    
     <table class="data">
         <tr>
             <th>Fecha</th>
@@ -24,7 +24,10 @@
                 <td>{{ movement.amount_to }}</td>
             </tr>
             {% endfor %}
-        {% else %}
+        {% elif dberror%}
+            <p id="message">Se ha producido el siguiente error en la base de datos:</p>
+            <p id="dberror">{{ dberror }}</p>
+        {% else%}
             <p id="message">Sin movimientos. Ve al menú "Compra" para cursar tu primera operación</p>
         {% endif %}
     </table>

@@ -12,10 +12,8 @@ def index():
     try:
         movements = dao.get_all()
         return render_template("index.html", mvm=movements, route=request.path)
-    except ValueError as e:
-        flash("Su base de datos no está operativa")
-        flash(str(e))
-        return render_template("index.html", mvm=movements, route=request.path)
+    except sqlite3.Error as e:
+        return render_template("index.html", dberror=e, route=request.path)
     
 @app.route("/purchase", methods=["GET", "POST"])
 def purchase():

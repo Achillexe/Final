@@ -22,7 +22,10 @@ https://www.coinapi.io/
 3. Instalar dependencias del proyecto ejecutando:
 `pip install -r requirements.txt`
 
-4. Crear base de datos ejecutando el script `create_db.py` dentro de la carpeta "data".
+4. La base de datos se creará automáticamente al inicializar el servidor. Si se elimina la base de datos con el servidor levantado, se deberá seguir los siguientes pasos para reinicializar el sistema correctamente:
+- Tumbar el servidor.
+- Eliminar el fichero movements.db de la carpeta "data".
+- Levantar el servicor nuevamente.
 
 
 # Ejecución

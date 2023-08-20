@@ -90,3 +90,10 @@ header {
     position:relative;
     top: 50px;
 }
+
+#dberror {
+    color: rgb(250, 76, 76);
+    position: relative;
+    top: -70px;
+    margin: 0px;
+}

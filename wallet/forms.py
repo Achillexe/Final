@@ -29,25 +29,12 @@ def choose_from(field):
         return [("EUR", "Euros")]
     else:
         choices = [("EUR", "Euros")]
-        for currency in data:
-            if currency == "ETH":
-                choices.append((currency, "Ethereum"))
-            elif currency == "BNB":
-                choices.append((currency, "Binance Coin"))
-            elif currency == "ADA":
-                choices.append((currency, "Cardano"))
-            elif currency == "DOT":
-                choices.append((currency, "Polkadot"))
-            elif currency == "BTC":
-                choices.append((currency, "Bitcoin"))
-            elif currency == "USDT":
-                choices.append((currency, "Tether"))
-            elif currency == "XRP":
-                choices.append((currency, "Ripple"))
-            elif currency == "SOL":
-                choices.append((currency, "Solana"))
-            elif currency == "MATIN":
-                choices.append((currency, "Poligon"))
+        alternatives = [("ETH", "Ethereum"), ("BNB", "Binance Coin"), ("ADA", "Cardano"), ("DOT", "Polkadot"), 
+                        ("BTC", "Bitcoin"), ("USDT", "Tether"), ("XRP", "Ripple"), ("SOL", "Solana"), ("MATIC", "Polygon")]
+
+        for currency, description in alternatives:
+            if currency in data:
+                choices.append((currency, description))
 
         return choices
 
